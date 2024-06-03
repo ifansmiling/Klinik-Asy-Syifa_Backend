@@ -3,197 +3,6 @@ import Obat from "../models/ObatModel.js";
 import ResepObat from "../models/ResepObatModel.js";
 import { Op } from "sequelize";
 
-// Endpoint untuk mengambil data pasien dan resep per minggu
-export const getDataPasienPerMinggu = async (req, res) => {
-  try {
-    const today = new Date();
-    const firstDayOfWeek = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay() - 6 * 7
-    );
-
-    // Mengambil data pasien dan resep per minggu
-    const dataPerMinggu = {};
-    for (let i = 0; i < 7; i++) {
-      const startOfWeek = new Date(
-        firstDayOfWeek.getFullYear(),
-        firstDayOfWeek.getMonth(),
-        firstDayOfWeek.getDate() + i * 7
-      );
-      const endOfWeek = new Date(
-        firstDayOfWeek.getFullYear(),
-        firstDayOfWeek.getMonth(),
-        firstDayOfWeek.getDate() + i * 7 + 6
-      );
-
-      const startMonth = startOfWeek.getMonth() + 1; // Bulan awal minggu
-      const startDate = startOfWeek.getDate(); // Tanggal awal minggu
-      const endMonth = endOfWeek.getMonth() + 1; // Bulan akhir minggu
-      const endDate = endOfWeek.getDate(); // Tanggal akhir minggu
-
-      const label = `${startOfWeek.toISOString()} - ${endOfWeek.toISOString()}`;
-
-      const pasienList = await Pasien.findAll({
-        where: {
-          tanggal_berobat: {
-            [Op.between]: [startOfWeek, endOfWeek],
-          },
-        },
-      });
-
-      dataPerMinggu[label] = {
-        pasien: pasienList.length,
-      };
-    }
-
-    res.json(dataPerMinggu);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-export const getPasienPerHariByWeek = async (req, res) => {
-  try {
-    const { startOfWeek, endOfWeek } = req.query; // Menerima informasi minggu yang dipilih dari frontend
-
-    // Mengambil data pasien per hari untuk minggu yang dipilih
-    const dataPasienPerHari = {};
-    const start = new Date(startOfWeek);
-    start.setDate(start.getDate() - start.getDay() - 1);
-    const end = new Date(endOfWeek);
-
-    for (let i = 0; i < 7; i++) {
-      const startDate = new Date(start);
-      startDate.setDate(startDate.getDate() + i); // Tambahkan jumlah hari untuk mendapatkan tanggal pada hari tersebut
-
-      const endDate = new Date(end); // Gunakan endOfWeek aslinya untuk akhir rentang waktu
-
-      const pasienList = await Pasien.findAll({
-        where: {
-          tanggal_berobat: {
-            [Op.between]: [startDate, endDate], // Ambil pasien yang berobat pada tanggal tersebut
-          },
-        },
-      });
-
-      const label = `${startDate.getDate()}/${
-        startDate.getMonth() + 1
-      }/${startDate.getFullYear()}`; // Format tanggal sebagai label
-
-      dataPasienPerHari[label] = {
-        pasien: pasienList.length,
-      };
-    }
-
-    res.json(dataPasienPerHari);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Fungsi untuk mendapatkan nama bulan dari nomor bulan
-function getMonthName(month) {
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  return monthNames[month - 1];
-}
-
-// Mendapatkan daftar pasien dengan proses resep selesai pada hari ini
-export const getPasienSelesaiHariIni = async (req, res) => {
-  try {
-    // Mengambil tanggal hari ini
-    const today = new Date();
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-    const endOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() + 1
-    );
-
-    // Mengambil daftar pasien dengan proses resep selesai pada hari ini
-    const pasienList = await Pasien.findAll({
-      where: {
-        tanggal_berobat: {
-          [Op.between]: [startOfDay, endOfDay],
-        },
-        proses_resep: "Selesai", // Hanya pasien dengan proses resep selesai
-      },
-      attributes: [
-        "id",
-        "nama_pasien",
-        "alamat_pasien",
-        "dokter",
-        "tanggal_berobat",
-        "proses_resep",
-      ],
-    });
-
-    res.json(pasienList);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Mendapatkan data pasien berdasarkan tanggal_berobat yang sama dengan hari ini
-export const getPasienByTodayDate = async (req, res) => {
-  try {
-    const today = new Date();
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-    const endOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() + 1
-    );
-
-    console.log("Start of Day:", startOfDay);
-    console.log("End of Day:", endOfDay);
-
-    const pasienList = await Pasien.findAll({
-      where: {
-        tanggal_berobat: {
-          [Op.between]: [startOfDay, endOfDay],
-        },
-      },
-      attributes: [
-        "id",
-        "nama_pasien",
-        "alamat_pasien",
-        "dokter",
-        "tanggal_berobat",
-        "proses_resep",
-      ],
-    });
-
-    console.log("Pasien List:", pasienList);
-
-    res.json(pasienList);
-  } catch (error) {
-    console.error("Error fetching pasien by today's date:", error);
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // Mendapatkan semua data pasien
 export const getPasien = async (req, res) => {
   try {
@@ -307,38 +116,247 @@ export const updatePasienById = async (req, res) => {
   }
 };
 
-// Menghapus pasien beserta data terkait
-export const deletePasien = async (req, res) => {
+// Endpoint untuk mengambil data pasien dan resep per minggu
+export const getDataPasienPerMinggu = async (req, res) => {
   try {
-    const { id } = req.params;
+    const today = new Date();
+    const firstDayOfWeek = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - today.getDay() - 6 * 7
+    );
 
-    // Temukan semua entri Obat yang terkait dengan pasien
-    const obatList = await Obat.findAll({ where: { pasien_id: id } });
+    // Function to format date to day-Month
+    const formatDate = (date) => {
+      const day = String(date.getDate()).padStart(2, "0");
+      const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const month = monthNames[date.getMonth()];
+      return `${day}-${month}`;
+    };
 
-    // Hapus semua entri ResepObat yang terkait dengan setiap Obat
-    for (let obat of obatList) {
-      await ResepObat.destroy({ where: { obat_id: obat.id } });
+    // Fetch data pasien and resep per minggu
+    const dataPerMinggu = {};
+    for (let i = 0; i < 7; i++) {
+      const startOfWeek = new Date(
+        firstDayOfWeek.getFullYear(),
+        firstDayOfWeek.getMonth(),
+        firstDayOfWeek.getDate() + i * 7
+      );
+      const endOfWeek = new Date(
+        firstDayOfWeek.getFullYear(),
+        firstDayOfWeek.getMonth(),
+        firstDayOfWeek.getDate() + i * 7 + 6
+      );
+
+      const label = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
+
+      const pasienList = await Pasien.findAll({
+        where: {
+          tanggal_berobat: {
+            [Op.between]: [startOfWeek, endOfWeek],
+          },
+        },
+      });
+
+      dataPerMinggu[label] = {
+        pasien: pasienList.length,
+      };
     }
 
-    // Hapus semua entri Obat yang terkait dengan pasien
-    await Obat.destroy({ where: { pasien_id: id } });
-
-    // Hapus entri pasien itu sendiri
-    await Pasien.destroy({ where: { id } });
-
-    res.json({ message: "Data pasien dan terkait berhasil dihapus" });
+    res.json(dataPerMinggu);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteResepObatByPasienId = async (req, res) => {
+export const getPasienPerHariByWeek = async (req, res) => {
   try {
-    const { pasien_id } = req.params;
-    // Hapus entri resep_obat yang terkait dengan pasien_id
-    await ResepObat.destroy({ where: { pasien_id } });
-    res.json({ message: "Resep obat terkait berhasil dihapus" });
+    const { startOfWeek, endOfWeek } = req.query;
+
+    console.log("Start of Week:", startOfWeek);
+    console.log("End of Week:", endOfWeek);
+
+    // Update the parseDate function to handle the provided date format
+    const parseDate = (dateString) => {
+      const [day, monthName] = dateString.split("-");
+      const monthIndex = new Date(
+        Date.parse(monthName + " 1, 2000")
+      ).getMonth(); // Get the month index from month name
+      const currentYear = new Date().getFullYear();
+      return new Date(currentYear, monthIndex, parseInt(day));
+    };
+
+    const start = parseDate(startOfWeek);
+    const end = parseDate(endOfWeek);
+
+    console.log("Parsed Start Date:", start);
+    console.log("Parsed End Date:", end);
+
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const monthsOfYear = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const dataPasienPerHari = {};
+
+    // Adjust the end date to the last day of the week
+    end.setDate(end.getDate() + 6 - end.getDay());
+
+    console.log("Adjusted End Date:", end);
+
+    for (
+      let currentDate = new Date(start);
+      currentDate <= end;
+      currentDate.setDate(currentDate.getDate() + 1)
+    ) {
+      console.log("Processing Date:", currentDate);
+
+      const pasienList = await Pasien.findAll({
+        where: {
+          tanggal_berobat: currentDate,
+        },
+      });
+
+      console.log("Patient List for", currentDate, ":", pasienList);
+
+      const dayName = daysOfWeek[currentDate.getDay()];
+      const monthName = monthsOfYear[currentDate.getMonth()];
+
+      const label = `${currentDate.getDate()}-${monthName.slice(0, 3)}`;
+
+      dataPasienPerHari[label] = {
+        pasien: pasienList.length,
+        dayName: dayName,
+      };
+    }
+
+    console.log("Result Data:", dataPasienPerHari);
+
+    res.json(dataPasienPerHari);
   } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Mendapatkan daftar pasien dengan proses resep selesai pada hari ini
+export const getResepSelesaiHariIni = async (req, res) => {
+  try {
+    // Mengambil tanggal hari ini
+    const today = new Date();
+    const startOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const endOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 1
+    );
+
+    // Mendapatkan resep obat selesai hari ini
+    const resepList = await ResepObat.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [startOfDay, endOfDay],
+        },
+      },
+      include: [
+        {
+          model: Obat,
+          attributes: ["id", "nama_obat", "jumlah_obat", "bentuk_obat"],
+          include: {
+            model: Pasien,
+            attributes: ["id", "nama_pasien", "alamat_pasien", "dokter", "tanggal_berobat"],
+            where: {
+              proses_resep: "Selesai" // Filter hanya pasien dengan proses resep selesai
+            }
+          },
+        },
+      ],
+    });
+
+    // Filter resep yang tidak memiliki pasien atau pasien proses resepnya tidak selesai
+    const filteredResepList = resepList.filter(resep => resep.obat && resep.obat.pasien);
+
+    res.json(filteredResepList);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Mendapatkan data pasien berdasarkan tanggal_berobat yang sama dengan hari ini
+export const getPasienByTodayDate = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const endOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 1
+    );
+
+    console.log("Start of Day:", startOfDay);
+    console.log("End of Day:", endOfDay);
+
+    const pasienList = await Pasien.findAll({
+      where: {
+        tanggal_berobat: {
+          [Op.between]: [startOfDay, endOfDay],
+        },
+      },
+      attributes: [
+        "id",
+        "nama_pasien",
+        "alamat_pasien",
+        "dokter",
+        "tanggal_berobat",
+        "proses_resep",
+      ],
+    });
+
+    console.log("Pasien List:", pasienList);
+
+    res.json(pasienList);
+  } catch (error) {
+    console.error("Error fetching pasien by today's date:", error);
     res.status(500).json({ message: error.message });
   }
 };

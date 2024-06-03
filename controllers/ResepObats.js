@@ -1,6 +1,48 @@
 import ResepObat from "../models/ResepObatModel.js";
 import { Op } from "sequelize";
 
+
+//Mengambil semua data
+export const getAllResepObat = async (req, res) => {
+  try {
+    const resepObats = await ResepObat.findAll({
+      attributes: [
+        "id",
+        "nama_resep",
+        "jumlah_resep",
+        "bentuk_resep",
+        "obat_id",
+        "createdAt",
+      ], // Menentukan atribut yang ingin diambil
+    });
+    res.status(200).json(resepObats);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//Mengambil data berdasarkan id
+export const getResepObatById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const resepObat = await ResepObat.findByPk(id, {
+      attributes: [
+        "id",
+        "nama_resep",
+        "jumlah_resep",
+        "bentuk_resep",
+        "obat_id",
+      ], // Menentukan atribut yang ingin diambil
+    });
+    if (!resepObat) {
+      return res.status(404).json({ message: "ResepObat not found" }); // Return early
+    }
+    res.status(200).json(resepObat); // Return directly
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Mendapatkan jumlah resep obat untuk hari ini
 export const getResepObatHariIni = async (req, res) => {
   try {
@@ -28,46 +70,6 @@ export const getResepObatHariIni = async (req, res) => {
     res.json({ totalResepObatHariIni });
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }
-};
-
-//Mengambil semua data
-export const getAllResepObat = async (req, res) => {
-  try {
-    const resepObats = await ResepObat.findAll({
-      attributes: [
-        "id",
-        "nama_resep",
-        "jumlah_resep",
-        "bentuk_resep",
-        "obat_id",
-        "createdAt",
-      ], // Menentukan atribut yang ingin diambil
-    });
-    res.status(200).json(resepObats);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const getResepObatById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const resepObat = await ResepObat.findByPk(id, {
-      attributes: [
-        "id",
-        "nama_resep",
-        "jumlah_resep",
-        "bentuk_resep",
-        "obat_id",
-      ], // Menentukan atribut yang ingin diambil
-    });
-    if (!resepObat) {
-      return res.status(404).json({ message: "ResepObat not found" }); // Return early
-    }
-    res.status(200).json(resepObat); // Return directly
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 };
 
@@ -138,31 +140,5 @@ export const updateResepObat = async (req, res) => {
     res.status(200).json(resepObat); // Return directly
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
-};
-
-// Delete (DELETE)
-export const deleteResepObat = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const resepObat = await ResepObat.findByPk(id);
-    if (!resepObat) {
-      return res.status(404).json({ message: "ResepObat not found" }); // Return early
-    }
-    await resepObat.destroy();
-    res.status(204).send(); // Send empty response
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const deleteResepObatByPasienId = async (req, res) => {
-  try {
-    const { pasien_id } = req.params;
-    // Sesuaikan nama kolom yang tepat dengan struktur model ResepObat
-    await ResepObat.destroy({ where: { pasienId: pasien_id } });
-    res.json({ message: "Resep obat terkait berhasil dihapus" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 };

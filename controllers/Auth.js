@@ -57,7 +57,7 @@ export const logoutUser = async (req, res) => {
     const token = req.header("Authorization").replace("Bearer ", "");
 
     // Blacklist the token
-    await blacklistToken(token); // Pastikan koneksi Redis sudah dibuka sebelum menggunakan fungsi ini
+    await blacklistToken(token); 
 
     res.json({ message: "Logout berhasil" });
   } catch (error) {

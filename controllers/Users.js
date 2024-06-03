@@ -100,21 +100,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// Menghapus user berdasarkan ID
-export const deleteUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-    if (user) {
-      await user.destroy();
-      res.json({ message: "User telah dihapus" });
-    } else {
-      res.status(404).json({ message: "User tidak ditemukan" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // Mengubah status pengguna menjadi nonaktif berdasarkan ID
 export const disableUser = async (req, res) => {
   try {
