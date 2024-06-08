@@ -1,10 +1,9 @@
-import Pasien from "../models/PasienModel.js";
-import Obat from "../models/ObatModel.js";
-import ResepObat from "../models/ResepObatModel.js";
-import { Op } from "sequelize";
+const Pasien = require("../models/PasienModel.js");
+const Obat = require("../models/ObatModel.js");
+const ResepObat = require("../models/ResepObatModel.js");
+const { Op } = require("sequelize");
 
-// Mendapatkan semua data pasien
-export const getPasien = async (req, res) => {
+const getPasien = async (req, res) => {
   try {
     const pasienList = await Pasien.findAll({
       attributes: [
@@ -23,8 +22,7 @@ export const getPasien = async (req, res) => {
   }
 };
 
-// Mendapatkan detail pasien berdasarkan ID
-export const getPasienById = async (req, res) => {
+const getPasienById = async (req, res) => {
   try {
     const pasien = await Pasien.findByPk(req.params.id, {
       attributes: [
@@ -46,8 +44,7 @@ export const getPasienById = async (req, res) => {
   }
 };
 
-// Membuat pasien baru
-export const createPasien = async (req, res) => {
+const createPasien = async (req, res) => {
   try {
     const newPasien = await Pasien.create(req.body);
     res.status(201).json(newPasien);
@@ -56,8 +53,7 @@ export const createPasien = async (req, res) => {
   }
 };
 
-// Mengupdate pasien berdasarkan ID
-export const updatePasien = async (req, res) => {
+const updatePasien = async (req, res) => {
   try {
     const { id } = req.params;
     const { proses_resep } = req.body;
@@ -91,7 +87,7 @@ export const updatePasien = async (req, res) => {
   }
 };
 
-export const updatePasienById = async (req, res) => {
+const updatePasienById = async (req, res) => {
   try {
     const { id } = req.params;
     const { nama_pasien, alamat_pasien, dokter, tanggal_berobat } = req.body;
@@ -116,8 +112,7 @@ export const updatePasienById = async (req, res) => {
   }
 };
 
-// Endpoint untuk mengambil data pasien dan resep per minggu
-export const getDataPasienPerMinggu = async (req, res) => {
+const getDataPasienPerMinggu = async (req, res) => {
   try {
     const today = new Date();
     const firstDayOfWeek = new Date(
@@ -182,7 +177,7 @@ export const getDataPasienPerMinggu = async (req, res) => {
   }
 };
 
-export const getPasienPerHariByWeek = async (req, res) => {
+const getPasienPerHariByWeek = async (req, res) => {
   try {
     const { startOfWeek, endOfWeek } = req.query;
 
@@ -271,8 +266,7 @@ export const getPasienPerHariByWeek = async (req, res) => {
   }
 };
 
-// Mendapatkan daftar pasien dengan proses resep selesai pada hari ini
-export const getResepSelesaiHariIni = async (req, res) => {
+const getResepSelesaiHariIni = async (req, res) => {
   try {
     // Mengambil tanggal hari ini
     const today = new Date();
@@ -300,17 +294,25 @@ export const getResepSelesaiHariIni = async (req, res) => {
           attributes: ["id", "nama_obat", "jumlah_obat", "bentuk_obat"],
           include: {
             model: Pasien,
-            attributes: ["id", "nama_pasien", "alamat_pasien", "dokter", "tanggal_berobat"],
+            attributes: [
+              "id",
+              "nama_pasien",
+              "alamat_pasien",
+              "dokter",
+              "tanggal_berobat",
+            ],
             where: {
-              proses_resep: "Selesai" // Filter hanya pasien dengan proses resep selesai
-            }
+              proses_resep: "Selesai", // Filter hanya pasien dengan proses resep selesai
+            },
           },
         },
       ],
     });
 
     // Filter resep yang tidak memiliki pasien atau pasien proses resepnya tidak selesai
-    const filteredResepList = resepList.filter(resep => resep.obat && resep.obat.pasien);
+    const filteredResepList = resepList.filter(
+      (resep) => resep.obat && resep.obat.pasien
+    );
 
     res.json(filteredResepList);
   } catch (error) {
@@ -318,8 +320,7 @@ export const getResepSelesaiHariIni = async (req, res) => {
   }
 };
 
-// Mendapatkan data pasien berdasarkan tanggal_berobat yang sama dengan hari ini
-export const getPasienByTodayDate = async (req, res) => {
+const getPasienByTodayDate = async (req, res) => {
   try {
     const today = new Date();
     const startOfDay = new Date(
@@ -359,4 +360,16 @@ export const getPasienByTodayDate = async (req, res) => {
     console.error("Error fetching pasien by today's date:", error);
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getPasien,
+  getPasienById,
+  createPasien,
+  updatePasien,
+  updatePasienById,
+  getDataPasienPerMinggu,
+  getPasienPerHariByWeek,
+  getResepSelesaiHariIni,
+  getPasienByTodayDate,
 };

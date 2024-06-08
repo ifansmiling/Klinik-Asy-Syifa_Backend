@@ -1,9 +1,9 @@
-import User from "../models/UserModel.js";
-import Role from "../models/RoleModel.js";
-import argon2 from "argon2";
+const User = require("../models/UserModel.js");
+const Role = require("../models/RoleModel.js");
+const argon2 = require("argon2");
 
 // Mendapatkan semua data user dengan informasi email, id, dan role saja
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
     const userList = await User.findAll({
       attributes: ["id", "nama", "email", "active"],
@@ -20,7 +20,7 @@ export const getUsers = async (req, res) => {
 };
 
 // Mendapatkan detail user berdasarkan ID beserta role
-export const getUserWithRoleById = async (req, res) => {
+const getUserWithRoleById = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findByPk(userId, {
@@ -40,7 +40,7 @@ export const getUserWithRoleById = async (req, res) => {
 };
 
 // Membuat user baru
-export const createUser = async (req, res) => {
+const createUser = async (req, res) => {
   try {
     const { nama, email, kata_sandi, roleId } = req.body;
 
@@ -67,7 +67,7 @@ export const createUser = async (req, res) => {
 };
 
 // Fungsi update user
-export const updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const { nama, email, kata_sandi, roleId } = req.body;
@@ -101,7 +101,7 @@ export const updateUser = async (req, res) => {
 };
 
 // Mengubah status pengguna menjadi nonaktif berdasarkan ID
-export const disableUser = async (req, res) => {
+const disableUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const affectedRows = await User.update(
@@ -120,7 +120,7 @@ export const disableUser = async (req, res) => {
 };
 
 // Mengubah status pengguna menjadi aktif kembali berdasarkan ID
-export const enableUser = async (req, res) => {
+const enableUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const affectedRows = await User.update(
@@ -136,4 +136,13 @@ export const enableUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getUsers,
+  getUserWithRoleById,
+  createUser,
+  updateUser,
+  disableUser,
+  enableUser,
 };

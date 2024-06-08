@@ -1,17 +1,14 @@
-import express from "express";
-import cors from "cors";
-import session from "express-session";
-import dotenv from "dotenv";
-import UserRoute from "./routes/UserRoute.js";
-import RoleRoute from "./routes/RoleRoute.js";
-import ObatRoute from "./routes/ObatRoute.js";
-import PasienRoute from "./routes/PasienRoute.js";
-import ResepObatRoute from "./routes/ResepObatRoute.js"; // Perhatikan penulisan ResepObatRoute yang benar di sini
-import AuthRoute from "./routes/AuthRoute.js";
-import resepObatRoute from "./routes/ResepObatRoute.js";
-// import db from "./config/Database.js";
-
-dotenv.config();
+const express = require("express");
+const cors = require("cors");
+const session = require("express-session");
+const dotenv = require("dotenv");
+const UserRoute = require("./routes/UserRoute.js");
+const RoleRoute = require("./routes/RoleRoute.js");
+const ObatRoute = require("./routes/ObatRoute.js");
+const PasienRoute = require("./routes/PasienRoute.js");
+const ResepObatRoute = require("./routes/ResepObatRoute.js");
+const AuthRoute = require("./routes/AuthRoute.js");
+//const db = require("./config/Database.js");
 
 // db.authenticate()
 //   .then(() => {
@@ -23,7 +20,15 @@ dotenv.config();
 //   })
 //   .catch((err) => console.error("Error connecting to database:", err));
 
+dotenv.config();
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(
   session({
@@ -36,14 +41,11 @@ app.use(
   })
 );
 
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:5173",
-  })
-);
-
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Selamat datang di server Klinik Asy-Syifa!");
+});
 
 // Menggunakan rute-rute yang telah didefinisikan
 app.use(UserRoute);
@@ -53,7 +55,7 @@ app.use(ObatRoute);
 app.use(ResepObatRoute); // Gunakan ResepObatRoute yang telah didefinisikan
 app.use(AuthRoute);
 app.use(PasienRoute);
-app.use(resepObatRoute);
+app.use(ResepObatRoute); // Menggunakan ResepObatRoute yang telah didefinisikan
 
 // Port yang digunakan adalah dari file .env
 const PORT = process.env.PORT || 5000;

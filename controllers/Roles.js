@@ -1,7 +1,7 @@
-import Role from "../models/RoleModel.js";
+const Role = require("../models/RoleModel.js");
 
 // Mendapatkan semua data role
-export const getRole = async (req, res) => {
+const getRole = async (req, res) => {
   try {
     const roleList = await Role.findAll({
       attributes: ["id", "role"],
@@ -14,7 +14,7 @@ export const getRole = async (req, res) => {
 };
 
 // Mendapatkan detail role berdasarkan ID
-export const getRoleById = async (req, res) => {
+const getRoleById = async (req, res) => {
   try {
     const roleId = req.params.id;
     const role = await Role.findByPk(roleId, {
@@ -28,4 +28,9 @@ export const getRoleById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getRole,
+  getRoleById
 };

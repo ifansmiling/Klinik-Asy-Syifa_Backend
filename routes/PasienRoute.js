@@ -1,5 +1,5 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   getPasien,
   getPasienById,
   getPasienByTodayDate,
@@ -9,17 +9,19 @@ import {
   createPasien,
   updatePasien,
   updatePasienById,
-} from "../controllers/Pasiens.js";
+} = require("../controllers/Pasiens.js");
+const checkLogin = require("../middleware/checkLogin.js");
 
 const router = express.Router();
-router.get("/pasien", getPasien);
-router.get("/pasien/:id", getPasienById);
-router.get("/pasien/today/date", getPasienByTodayDate);
-router.get("/pasien/today/obat/selesai", getResepSelesaiHariIni);
-router.get("/pasien/today/obat/week/date", getDataPasienPerMinggu);
-router.get("/pasien/perhari-by-week/hari", getPasienPerHariByWeek);
-router.post("/pasien", createPasien);
-router.put("/pasien/:id", updatePasien);
-router.put("/pasien/update/:id", updatePasienById);
 
-export default router;
+router.get("/pasien", checkLogin, getPasien);
+router.get("/pasien/:id", checkLogin, getPasienById);
+router.get("/pasien/today/date", checkLogin, getPasienByTodayDate);
+router.get("/pasien/today/obat/selesai", checkLogin, getResepSelesaiHariIni);
+router.get("/pasien/today/obat/week/date", checkLogin, getDataPasienPerMinggu);
+router.get("/pasien/perhari-by-week/hari", checkLogin, getPasienPerHariByWeek);
+router.post("/pasien", checkLogin, createPasien);
+router.put("/pasien/:id", checkLogin, updatePasien);
+router.put("/pasien/update/:id", checkLogin, updatePasienById);
+
+module.exports = router;

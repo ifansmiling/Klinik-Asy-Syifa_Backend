@@ -1,21 +1,21 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   getResepObatById,
   getResepObatByObatId,
   getAllResepObat,
   getResepObatHariIni,
   createResepObat,
   updateResepObat,
-} from "../controllers/ResepObats.js";
-
+} = require("../controllers/ResepObats.js");
+const checkLogin = require("../middleware/checkLogin.js");
 
 const router = express.Router();
 
-router.get("/resep_obat", getAllResepObat);
-router.get("/resep_obat/:id", getResepObatById);
-router.get("/resep_obat/obat/:obat_id", getResepObatByObatId); 
-router.get("/resep_obat/today/date", getResepObatHariIni);
-router.post("/resep_obat", createResepObat);
-router.patch("/resep_obat/:id", updateResepObat);
+router.get("/resep_obat", checkLogin, getAllResepObat);
+router.get("/resep_obat/:id", checkLogin, getResepObatById);
+router.get("/resep_obat/obat/:obat_id", checkLogin, getResepObatByObatId);
+router.get("/resep_obat/today/date", checkLogin, getResepObatHariIni);
+router.post("/resep_obat", checkLogin, createResepObat);
+router.patch("/resep_obat/:id", checkLogin, updateResepObat);
 
-export default router;
+module.exports = router;

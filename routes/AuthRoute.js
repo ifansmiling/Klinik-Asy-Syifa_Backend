@@ -1,9 +1,11 @@
-import express from "express";
-import { loginUser, logoutUser } from "../controllers/Auth.js";
+const express = require("express");
+const { loginUser, logoutUser } = require("../controllers/Auth.js");
+const checkLogin = require("../middleware/checkLogin");
 
 const router = express.Router();
 
+// Middleware checkLogin digunakan di sini untuk memeriksa autentikasi
 router.post("/login", loginUser);
-router.post("/logout", logoutUser);
+router.post("/logout", checkLogin, logoutUser);
 
-export default router;
+module.exports = router;

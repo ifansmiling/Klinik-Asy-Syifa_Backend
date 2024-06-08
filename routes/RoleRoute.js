@@ -1,9 +1,10 @@
-import express from "express";
-import { getRole, getRoleById } from "../controllers/Roles.js";
+const express = require("express");
+const { getRole, getRoleById } = require("../controllers/Roles.js");
+const checkLogin = require("../middleware/checkLogin.js");
 
 const router = express.Router();
 
-router.get("/role", getRole);
-router.get("/role/:id", getRoleById);
+router.get("/role", checkLogin, getRole);
+router.get("/role/:id", checkLogin, getRoleById);
 
-export default router;
+module.exports = router;

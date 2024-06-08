@@ -1,11 +1,14 @@
-import User from "../models/UserModel.js";
-import Role from "../models/RoleModel.js";
-import argon2 from "argon2";
-import jwt from "jsonwebtoken";
+const User = require("../models/UserModel.js");
+const Role = require("../models/RoleModel.js");
+const argon2 = require("argon2");
+const jwt = require("jsonwebtoken");
 
-// Fungsi login user
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
+    if (req.session && req.session.user) {
+      return res.status(400).json({ message: "Anda sudah login" });
+    }
+
     const { email, kata_sandi } = req.body;
 
     // Cari user berdasarkan email
@@ -51,16 +54,21 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// Fungsi logout user
-export const logoutUser = async (req, res) => {
+
+const logoutUser = async (req, res) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
 
     // Blacklist the token
-    await blacklistToken(token); 
+    await blacklistToken(token);
 
     res.json({ message: "Logout berhasil" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  loginUser,
+  logoutUser,
 };

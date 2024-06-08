@@ -1,7 +1,6 @@
-// Import Sequelize dan koneksi database
-import { Sequelize } from "sequelize";
-import db from "../config/Database.js";
-import Obat from "./ObatModel.js"; // Import model Obat
+const { Sequelize } = require("sequelize");
+const db = require("../config/Database.js");
+const Obat = require("./ObatModel.js"); // Import model Obat
 
 const { DataTypes } = Sequelize;
 
@@ -41,4 +40,4 @@ const ResepObat = db.define(
 // Definisikan relasi antara ResepObat dan Obat
 ResepObat.belongsTo(Obat, { foreignKey: "obat_id" });
 
-export default ResepObat;
+module.exports = ResepObat;

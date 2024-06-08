@@ -1,20 +1,20 @@
-import express from "express";
-import {
+const express = require("express");
+const router = express.Router();
+const {
   getUsers,
-  createUser,
   getUserWithRoleById,
+  createUser,
   updateUser,
   disableUser,
-  enableUser
-} from "../controllers/Users.js";
+  enableUser,
+} = require("../controllers/Users");
+const checkLogin = require("../middleware/checkLogin");
 
-const router = express.Router();
+router.get("/users", checkLogin, getUsers);
+router.get("/users/:id", checkLogin, getUserWithRoleById);
+router.post("/users", checkLogin, createUser);
+router.put("/users/:id", checkLogin, updateUser);
+router.put("/users/:id/disable", checkLogin, disableUser);
+router.put("/users/:id/enable", checkLogin, enableUser);
 
-router.get("/user", getUsers);
-router.get("/user/:id", getUserWithRoleById);
-router.post("/user", createUser);
-router.put("/user/:id", updateUser);
-router.put("/user/:id/disable", disableUser);
-router.put("/user/:id/enable", enableUser);
-
-export default router;
+module.exports = router;

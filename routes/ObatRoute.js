@@ -1,16 +1,12 @@
-import express from "express";
-import {
-  getObat,
-  getObatById,
-  createObat,
-  getObatByPasienId,
-} from "../controllers/Obats.js";
+const express = require("express");
+const { getObat, getObatById, createObat, getObatByPasienId } = require("../controllers/Obats.js");
+const checkLogin = require("../middleware/checkLogin.js");
 
 const router = express.Router();
 
-router.get("/obat", getObat);
-router.get("/obat/:pasien_id", getObatByPasienId);
-router.get("/obat/:id", getObatById);
-router.post("/obat", createObat);
+router.get("/obat", checkLogin, getObat);
+router.get("/obat/:pasien_id", checkLogin, getObatByPasienId);
+router.get("/obat/:id", checkLogin, getObatById);
+router.post("/obat", checkLogin, createObat);
 
-export default router;
+module.exports = router;

@@ -1,8 +1,6 @@
-// Import Sequelize dan koneksi database
-import { Sequelize } from "sequelize";
-import db from "../config/Database.js";
-import Pasien from "./PasienModel.js";
-
+const { Sequelize } = require("sequelize");
+const db = require("../config/Database.js");
+const Pasien = require("./PasienModel.js");
 const { DataTypes } = Sequelize;
 
 // Mendefinisikan model Obat
@@ -50,4 +48,4 @@ const Obat = db.define(
 Obat.belongsTo(Pasien, { foreignKey: "pasien_id" });
 
 // Export model Obat secara default
-export default Obat;
+module.exports = Obat;

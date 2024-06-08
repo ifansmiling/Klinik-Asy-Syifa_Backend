@@ -1,8 +1,5 @@
-// Import Sequelize dan koneksi database
-import { Sequelize } from "sequelize";
-import db from "../config/Database.js";
-
-const { DataTypes } = Sequelize;
+const { DataTypes } = require("sequelize");
+const db = require("../config/Database.js");
 
 // Mendefinisikan model Pasien
 const Pasien = db.define(
@@ -43,4 +40,4 @@ const Pasien = db.define(
 );
 
 // Export model Pasien secara default
-export default Pasien;
+module.exports = Pasien;

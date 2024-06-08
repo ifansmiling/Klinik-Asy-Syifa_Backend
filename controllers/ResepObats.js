@@ -1,9 +1,7 @@
-import ResepObat from "../models/ResepObatModel.js";
-import { Op } from "sequelize";
+const ResepObat = require("../models/ResepObatModel.js");
+const { Op } = require("sequelize");
 
-
-//Mengambil semua data
-export const getAllResepObat = async (req, res) => {
+const getAllResepObat = async (req, res) => {
   try {
     const resepObats = await ResepObat.findAll({
       attributes: [
@@ -21,8 +19,7 @@ export const getAllResepObat = async (req, res) => {
   }
 };
 
-//Mengambil data berdasarkan id
-export const getResepObatById = async (req, res) => {
+const getResepObatById = async (req, res) => {
   try {
     const { id } = req.params;
     const resepObat = await ResepObat.findByPk(id, {
@@ -43,8 +40,7 @@ export const getResepObatById = async (req, res) => {
   }
 };
 
-// Mendapatkan jumlah resep obat untuk hari ini
-export const getResepObatHariIni = async (req, res) => {
+const getResepObatHariIni = async (req, res) => {
   try {
     // Mengambil tanggal hari ini
     const today = new Date();
@@ -73,8 +69,7 @@ export const getResepObatHariIni = async (req, res) => {
   }
 };
 
-// Mendapatkan data obat berdasarkan ID pasien
-export const getResepObatByObatId = async (req, res) => {
+const getResepObatByObatId = async (req, res) => {
   try {
     const resepObatList = await ResepObat.findAll({
       where: {
@@ -94,8 +89,7 @@ export const getResepObatByObatId = async (req, res) => {
   }
 };
 
-// Create (POST)
-export const createResepObat = async (req, res) => {
+const createResepObat = async (req, res) => {
   try {
     const { nama_resep, jumlah_resep, bentuk_resep, obat_id } = req.body;
 
@@ -122,8 +116,7 @@ export const createResepObat = async (req, res) => {
   }
 };
 
-// Update (PUT)
-export const updateResepObat = async (req, res) => {
+const updateResepObat = async (req, res) => {
   try {
     const { id } = req.params;
     const { nama_resep, jumlah_resep, bentuk_resep, obat_id } = req.body;
@@ -141,4 +134,13 @@ export const updateResepObat = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  getAllResepObat,
+  getResepObatById,
+  getResepObatHariIni,
+  getResepObatByObatId,
+  createResepObat,
+  updateResepObat,
 };

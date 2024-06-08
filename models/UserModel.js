@@ -1,6 +1,6 @@
-import { Sequelize } from "sequelize";
-import db from "../config/Database.js";
-import Role from "./RoleModel.js";
+const { Sequelize } = require("sequelize");
+const db = require("../config/Database.js");
+const Role = require("./RoleModel.js");
 
 const { DataTypes } = Sequelize;
 
@@ -56,4 +56,4 @@ const Users = db.define(
 );
 
 Users.belongsTo(Role);
-export default Users;
+module.exports = Users;

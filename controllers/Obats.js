@@ -1,7 +1,7 @@
-import Obat from "../models/ObatModel.js";
+const Obat = require("../models/ObatModel.js");
 
 // Mendapatkan semua data obat
-export const getObat = async (req, res) => {
+const getObat = async (req, res) => {
   try {
     const obatList = await Obat.findAll({
       attributes: [
@@ -20,7 +20,7 @@ export const getObat = async (req, res) => {
 };
 
 // Mendapatkan detail obat berdasarkan ID
-export const getObatById = async (req, res) => {
+const getObatById = async (req, res) => {
   try {
     const obat = await Obat.findByPk(req.params.id, {
       attributes: [
@@ -42,8 +42,8 @@ export const getObatById = async (req, res) => {
   }
 };
 
-//create obat
-export const createObat = async (req, res) => {
+// Membuat obat baru
+const createObat = async (req, res) => {
   try {
     // Cek apakah pasien_id telah diisi
     if (!req.body.pasien_id) {
@@ -61,7 +61,7 @@ export const createObat = async (req, res) => {
 };
 
 // Mendapatkan data obat berdasarkan ID pasien
-export const getObatByPasienId = async (req, res) => {
+const getObatByPasienId = async (req, res) => {
   try {
     const obatList = await Obat.findAll({
       where: {
@@ -80,4 +80,11 @@ export const getObatByPasienId = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  getObat,
+  getObatById,
+  createObat,
+  getObatByPasienId
 };

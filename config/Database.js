@@ -1,8 +1,10 @@
-import { Sequelize } from "sequelize";
+const Sequelize = require("sequelize");
 
 const db = new Sequelize("db_klinik", "root", "", {
-  host: "localhost",
+  host: "",
   dialect: "mysql",
 });
 
-export default db;
+const database = db;
+
+module.exports = database;
