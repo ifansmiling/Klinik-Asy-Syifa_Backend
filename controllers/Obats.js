@@ -8,9 +8,10 @@ const getObat = async (req, res) => {
         "id",
         "nama_obat",
         "jumlah_obat",
+        "bentuk_obat",
         "dosis_obat",
         "cara_pakai",
-        "pasien_id"
+        "pasien_id",
       ],
     });
     res.json(obatList);
@@ -27,9 +28,10 @@ const getObatById = async (req, res) => {
         "id",
         "nama_obat",
         "jumlah_obat",
+        "bentuk_obat",
         "dosis_obat",
         "cara_pakai",
-        "pasien_id"
+        "pasien_id",
       ],
     });
     if (obat) {
@@ -65,15 +67,16 @@ const getObatByPasienId = async (req, res) => {
   try {
     const obatList = await Obat.findAll({
       where: {
-        pasien_id: req.params.pasien_id
+        pasien_id: req.params.pasien_id,
       },
       attributes: [
         "id",
         "nama_obat",
         "jumlah_obat",
+        "bentuk_obat",
         "dosis_obat",
         "cara_pakai",
-        "pasien_id"
+        "pasien_id",
       ],
     });
     res.json(obatList);
@@ -86,5 +89,5 @@ module.exports = {
   getObat,
   getObatById,
   createObat,
-  getObatByPasienId
+  getObatByPasienId,
 };
