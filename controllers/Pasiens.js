@@ -238,7 +238,6 @@ const getPasienPerHariByWeek = async (req, res) => {
       currentDate <= end;
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
-
       const pasienList = await Pasien.findAll({
         where: {
           tanggal_berobat: currentDate,
@@ -269,7 +268,6 @@ const getPasienPerHariByWeek = async (req, res) => {
 
 const getResepSelesaiHariIni = async (req, res) => {
   try {
-    // Mengambil tanggal hari ini
     const today = new Date();
     const startOfDay = new Date(
       today.getFullYear(),
@@ -282,7 +280,6 @@ const getResepSelesaiHariIni = async (req, res) => {
       today.getDate() + 1
     );
 
-    // Mendapatkan resep obat selesai hari ini
     const resepList = await ResepObat.findAll({
       where: {
         createdAt: {
@@ -292,6 +289,7 @@ const getResepSelesaiHariIni = async (req, res) => {
       include: [
         {
           model: Pasien,
+          as: "pasien", // Gunakan alias yang telah ditentukan
           attributes: [
             "id",
             "nama_pasien",
@@ -301,7 +299,7 @@ const getResepSelesaiHariIni = async (req, res) => {
             "proses_resep",
           ],
           where: {
-            proses_resep: "Selesai", // Filter hanya pasien dengan proses resep selesai
+            proses_resep: "Selesai",
           },
         },
       ],
