@@ -1,6 +1,7 @@
 const Pasien = require("../models/PasienModel.js");
 const Obat = require("../models/ObatModel.js");
 const ResepObat = require("../models/ResepObatModel.js");
+const StokResep = require("../models/StokResepModel.js");
 const { Op } = require("sequelize");
 
 const getPasien = async (req, res) => {
@@ -45,11 +46,20 @@ const getPasienById = async (req, res) => {
 };
 
 const createPasien = async (req, res) => {
+  const { nama_pasien, alamat_pasien, dokter, tanggal_berobat } = req.body;
+
   try {
-    const newPasien = await Pasien.create(req.body);
+    // Jika tidak ada, tambahkan pasien baru
+    const newPasien = await Pasien.create({
+      nama_pasien,
+      alamat_pasien,
+      dokter,
+      tanggal_berobat,
+    });
+
     res.status(201).json(newPasien);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: "Gagal menyimpan data pasien." });
   }
 };
 
@@ -181,9 +191,6 @@ const getPasienPerHariByWeek = async (req, res) => {
   try {
     const { startOfWeek, endOfWeek } = req.query;
 
-    console.log("Start of Week:", startOfWeek);
-    console.log("End of Week:", endOfWeek);
-
     // Update the parseDate function to handle the provided date format
     const parseDate = (dateString) => {
       const [day, monthName] = dateString.split("-");
@@ -196,9 +203,6 @@ const getPasienPerHariByWeek = async (req, res) => {
 
     const start = parseDate(startOfWeek);
     const end = parseDate(endOfWeek);
-
-    console.log("Parsed Start Date:", start);
-    console.log("Parsed End Date:", end);
 
     const daysOfWeek = [
       "Sunday",
@@ -229,14 +233,11 @@ const getPasienPerHariByWeek = async (req, res) => {
     // Adjust the end date to the last day of the week
     end.setDate(end.getDate() + 6 - end.getDay());
 
-    console.log("Adjusted End Date:", end);
-
     for (
       let currentDate = new Date(start);
       currentDate <= end;
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
-      console.log("Processing Date:", currentDate);
 
       const pasienList = await Pasien.findAll({
         where: {
@@ -290,31 +291,23 @@ const getResepSelesaiHariIni = async (req, res) => {
       },
       include: [
         {
-          model: Obat,
-          attributes: ["id", "nama_obat", "jumlah_obat", "bentuk_obat"],
-          include: {
-            model: Pasien,
-            attributes: [
-              "id",
-              "nama_pasien",
-              "alamat_pasien",
-              "dokter",
-              "tanggal_berobat",
-            ],
-            where: {
-              proses_resep: "Selesai", // Filter hanya pasien dengan proses resep selesai
-            },
+          model: Pasien,
+          attributes: [
+            "id",
+            "nama_pasien",
+            "alamat_pasien",
+            "dokter",
+            "tanggal_berobat",
+            "proses_resep",
+          ],
+          where: {
+            proses_resep: "Selesai", // Filter hanya pasien dengan proses resep selesai
           },
         },
       ],
     });
 
-    // Filter resep yang tidak memiliki pasien atau pasien proses resepnya tidak selesai
-    const filteredResepList = resepList.filter(
-      (resep) => resep.obat && resep.obat.pasien
-    );
-
-    res.json(filteredResepList);
+    res.json(resepList);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -362,6 +355,29 @@ const getPasienByTodayDate = async (req, res) => {
   }
 };
 
+const getPasienWithDetails = async (req, res) => {
+  try {
+    const pasienList = await Pasien.findAll({
+      include: [
+        {
+          model: ResepObat,
+          attributes: ["id", "tanggal_resep"],
+          include: [
+            {
+              model: StokResep,
+              attributes: ["nama_stok"], // Misalnya, atribut stok resep yang ingin ditampilkan
+            },
+          ],
+        },
+      ],
+    });
+
+    res.json(pasienList);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPasien,
   getPasienById,
@@ -372,4 +388,5 @@ module.exports = {
   getPasienPerHariByWeek,
   getResepSelesaiHariIni,
   getPasienByTodayDate,
+  getPasienWithDetails,
 };

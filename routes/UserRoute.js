@@ -10,7 +10,7 @@ const {
 } = require("../controllers/Users");
 const checkLogin = require("../middleware/checkLogin");
 
-router.get("/users", checkLogin, getUsers);
+router.get("/users",  getUsers);
 router.get("/users/:id", checkLogin, getUserWithRoleById);
 router.post("/users", checkLogin, createUser);
 router.put("/users/:id", checkLogin, updateUser);

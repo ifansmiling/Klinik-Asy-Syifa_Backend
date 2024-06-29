@@ -24,15 +24,7 @@ const getObat = async (req, res) => {
 const getObatById = async (req, res) => {
   try {
     const obat = await Obat.findByPk(req.params.id, {
-      attributes: [
-        "id",
-        "nama_obat",
-        "jumlah_obat",
-        "bentuk_obat",
-        "dosis_obat",
-        "cara_pakai",
-        "pasien_id",
-      ],
+      attributes: ["id", "nama_obat", "jumlah_obat", "pasien_id"],
     });
     if (obat) {
       res.json(obat);
@@ -53,8 +45,6 @@ const createObat = async (req, res) => {
         .status(400)
         .json({ message: "Tolong pilih pasien terlebih dahulu" });
     }
-
-    // Lanjutkan pembuatan obat jika pasien_id sudah diisi
     const newObat = await Obat.create(req.body);
     res.status(201).json(newObat);
   } catch (error) {
@@ -69,15 +59,7 @@ const getObatByPasienId = async (req, res) => {
       where: {
         pasien_id: req.params.pasien_id,
       },
-      attributes: [
-        "id",
-        "nama_obat",
-        "jumlah_obat",
-        "bentuk_obat",
-        "dosis_obat",
-        "cara_pakai",
-        "pasien_id",
-      ],
+      attributes: ["id", "nama_obat", "jumlah_obat", "pasien_id"],
     });
     res.json(obatList);
   } catch (error) {

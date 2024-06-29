@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const db = require("../config/Database.js");
 
-// Mendefinisikan model Pasien
 const Pasien = db.define(
   "pasien",
   {
@@ -25,7 +24,7 @@ const Pasien = db.define(
     },
     proses_resep: {
       type: DataTypes.STRING,
-      defaultValue: "Belum diproses", // Menyediakan nilai default
+      defaultValue: "Belum diproses",
       allowNull: false,
     },
     tanggal_berobat: {
@@ -39,5 +38,4 @@ const Pasien = db.define(
   }
 );
 
-// Export model Pasien secara default
 module.exports = Pasien;

@@ -1,10 +1,8 @@
-const { Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const db = require("../config/Database.js");
-const Obat = require("./ObatModel.js"); // Import model Obat
+const Pasien = require("./PasienModel");
+const StokResep = require("./StokResepModel");
 
-const { DataTypes } = Sequelize;
-
-// Mendefinisikan model ResepObat
 const ResepObat = db.define(
   "resep_obat",
   {
@@ -26,18 +24,41 @@ const ResepObat = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    obat_id: {
+    dosis: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cara_pakai: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    pasien_id: {
       type: DataTypes.UUID,
       allowNull: false,
+      references: {
+        model: Pasien,
+        key: "id",
+      },
+    },
+    stok_resep_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: StokResep,
+        key: "id",
+      },
     },
   },
   {
     freezeTableName: true,
-    timestamps: true, // Menambahkan kolom created_at dan updated_at secara otomatis
+    timestamps: true,
   }
 );
 
-// Definisikan relasi antara ResepObat dan Obat
-ResepObat.belongsTo(Obat, { foreignKey: "obat_id" });
+ResepObat.belongsTo(Pasien, { foreignKey: "pasien_id", as: "pasien" });
+StokResep.hasMany(ResepObat, {
+  foreignKey: "stok_resep_id",
+  onDelete: "CASCADE",
+});
 
 module.exports = ResepObat;

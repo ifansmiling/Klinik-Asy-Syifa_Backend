@@ -1,9 +1,7 @@
-const { Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const db = require("../config/Database.js");
-const Pasien = require("./PasienModel.js");
-const { DataTypes } = Sequelize;
+const Pasien = require("./PasienModel");
 
-// Mendefinisikan model Obat
 const Obat = db.define(
   "obat",
   {
@@ -21,31 +19,21 @@ const Obat = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    bentuk_obat: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    dosis_obat: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    cara_pakai: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     pasien_id: {
       type: DataTypes.UUID,
       allowNull: false,
+      references: {
+        model: Pasien,
+        key: "id",
+      },
     },
   },
   {
     freezeTableName: true,
-    timestamps: true, // Menambahkan kolom created_at dan updated_at secara otomatis
+    timestamps: true,
   }
 );
 
-// Definisikan relasi antara Obat dan Pasien
-Obat.belongsTo(Pasien, { foreignKey: "pasien_id" });
+Obat.belongsTo(Pasien, { foreignKey: "pasien_id", as: "pasien" });
 
-// Export model Obat secara default
 module.exports = Obat;

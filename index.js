@@ -8,7 +8,9 @@ const ObatRoute = require("./routes/ObatRoute.js");
 const PasienRoute = require("./routes/PasienRoute.js");
 const ResepObatRoute = require("./routes/ResepObatRoute.js");
 const AuthRoute = require("./routes/AuthRoute.js");
-//const db = require("./config/Database.js");
+const StokResep = require("./routes/StokRoute.js");
+
+// const db = require("./config/Database.js");
 
 // db.authenticate()
 //   .then(() => {
@@ -52,10 +54,10 @@ app.use(UserRoute);
 app.use(RoleRoute);
 app.use(PasienRoute);
 app.use(ObatRoute);
-app.use(ResepObatRoute); // Gunakan ResepObatRoute yang telah didefinisikan
 app.use(AuthRoute);
 app.use(PasienRoute);
-app.use(ResepObatRoute); // Menggunakan ResepObatRoute yang telah didefinisikan
+app.use(ResepObatRoute);
+app.use(StokResep);
 
 // Port yang digunakan adalah dari file .env
 const PORT = process.env.PORT || 5000;
