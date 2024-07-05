@@ -42,6 +42,13 @@ const loginUser = async (req, res) => {
       { expiresIn: "12h" }
     );
 
+    // Setel header untuk mengizinkan CORS dan kredensial
+    res.setHeader(
+      "Access-Control-Allow-Origin",
+      "https://klinikasy-syifa.vercel.app"
+    );
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+
     // Kembalikan token, pesan, dan data user beserta rolenya
     res.json({
       message: "Login berhasil",
@@ -53,7 +60,6 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const logoutUser = async (req, res) => {
   try {
