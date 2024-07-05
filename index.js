@@ -10,7 +10,6 @@ const ResepObatRoute = require("./routes/ResepObatRoute.js");
 const AuthRoute = require("./routes/AuthRoute.js");
 const StokResep = require("./routes/StokRoute.js");
 
-
 const db = require("./config/Database.js");
 // test
 db.authenticate()
@@ -23,7 +22,6 @@ db.authenticate()
   })
   .catch((err) => console.error("Error connecting to database:", err));
 
-  
 // Memuat konfigurasi dari .env
 dotenv.config();
 
