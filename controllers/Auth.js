@@ -11,7 +11,7 @@ const loginUser = async (req, res) => {
 
     const { email, kata_sandi } = req.body;
 
-    // Cari user berdasarkan email
+    // Find user by email
     const user = await User.findOne({
       where: { email: email },
       include: {
@@ -24,36 +24,36 @@ const loginUser = async (req, res) => {
       return res.status(404).json({ message: "User tidak ditemukan" });
     }
 
-    // Periksa apakah status pengguna adalah aktif
+    // Check if user status is active
     if (user.active !== "active") {
       return res.status(403).json({ message: "Akun Anda telah dinonaktifkan" });
     }
 
-    // Verifikasi kata sandi
+    // Verify password
     const isValidPassword = await argon2.verify(user.kata_sandi, kata_sandi);
     if (!isValidPassword) {
       return res.status(401).json({ message: "Kata sandi salah" });
     }
 
-    // Buat token JWT
+    // Create JWT token
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role.role },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "12h" }
     );
 
-    // Setel header untuk mengizinkan CORS dan kredensial
+    // Set headers to allow CORS and credentials
     res.setHeader(
       "Access-Control-Allow-Origin",
       "https://klinikasy-syifa.vercel.app"
     );
     res.setHeader("Access-Control-Allow-Credentials", "true");
 
-    // Kembalikan token, pesan, dan data user beserta rolenya
+    // Return token, message, user data and role
     res.json({
       message: "Login berhasil",
       accessToken: accessToken,
-      role: user.role.role, // Menambahkan peran pengguna ke respons
+      role: user.role.role,
       nama: user.nama,
     });
   } catch (error) {
