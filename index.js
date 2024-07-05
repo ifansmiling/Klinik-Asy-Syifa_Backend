@@ -60,7 +60,7 @@ app.use(ResepObatRoute);
 app.use(StokResep);
 
 // Port yang digunakan adalah dari file .env
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server up and running on port ${PORT}`);
@@ -75,3 +75,5 @@ process.on("SIGTERM", () => {
   client.quit();
   process.exit();
 });
+
+module.exports = app;
