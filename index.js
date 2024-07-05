@@ -10,41 +10,35 @@ const ResepObatRoute = require("./routes/ResepObatRoute.js");
 const AuthRoute = require("./routes/AuthRoute.js");
 const StokResep = require("./routes/StokRoute.js");
 
-// const db = require("./config/Database.js");
-
-// db.authenticate()
-//   .then(() => {
-//     console.log("Database connected");
-//     // Jalankan migrasi otomatis setiap kali server dijalankan
-//     db.sync()
-//       .then(() => console.log("Database synchronized"))
-//       .catch((err) => console.error("Error synchronizing database:", err));
-//   })
-//   .catch((err) => console.error("Error connecting to database:", err));
-
+// Memuat konfigurasi dari .env
 dotenv.config();
+
 const app = express();
 
+// Mengkonfigurasi CORS untuk mengizinkan akses dari semua origin
 app.use(
   cors({
-    origin: process.env.URL_BACKEND,
+    origin: "https://klinikasy-syifa.vercel.app/", // Atau ganti dengan URL frontend Anda untuk produksi
     credentials: true,
   })
 );
 
+// Mengkonfigurasi session
 app.use(
   session({
     secret: process.env.SESS_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: "auto",
+      secure: process.env.NODE_ENV === "production", // hanya secure cookie di produksi
     },
   })
 );
 
+// Middleware untuk mengurai request body sebagai JSON
 app.use(express.json());
 
+// Rute dasar untuk memastikan server berjalan
 app.get("/", (req, res) => {
   res.send("Selamat datang di server Klinik Asy-Syifa!");
 });
@@ -55,24 +49,24 @@ app.use(RoleRoute);
 app.use(PasienRoute);
 app.use(ObatRoute);
 app.use(AuthRoute);
-app.use(PasienRoute);
 app.use(ResepObatRoute);
 app.use(StokResep);
 
-// Port yang digunakan adalah dari file .env
+// Port yang digunakan adalah dari file .env atau default ke 3000
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server up and running on port ${PORT}`);
 });
 
+// Tangani sinyal untuk shutdown bersih
 process.on("SIGINT", () => {
-  client.quit();
+  // Tutup koneksi yang perlu ditutup dengan aman
   process.exit();
 });
 
 process.on("SIGTERM", () => {
-  client.quit();
+  // Tutup koneksi yang perlu ditutup dengan aman
   process.exit();
 });
 
