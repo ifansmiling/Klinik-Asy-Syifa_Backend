@@ -10,45 +10,41 @@ const ResepObatRoute = require("./routes/ResepObatRoute.js");
 const AuthRoute = require("./routes/AuthRoute.js");
 const StokResep = require("./routes/StokRoute.js");
 
-const db = require("./config/Database.js");
-// test
-db.authenticate()
-  .then(() => {
-    console.log("Database connected");
-    // Jalankan migrasi otomatis setiap kali server dijalankan
-    db.sync()
-      .then(() => console.log("Database synchronized"))
-      .catch((err) => console.error("Error synchronizing database:", err));
-  })
-  .catch((err) => console.error("Error connecting to database:", err));
+// const db = require("./config/Database.js");
 
-// Memuat konfigurasi dari .env
+// db.authenticate()
+//   .then(() => {
+//     console.log("Database connected");
+//     // Jalankan migrasi otomatis setiap kali server dijalankan
+//     db.sync()
+//       .then(() => console.log("Database synchronized"))
+//       .catch((err) => console.error("Error synchronizing database:", err));
+//   })
+//   .catch((err) => console.error("Error connecting to database:", err));
+
 dotenv.config();
-
 const app = express();
 
-// Mengkonfigurasi CORS untuk mengizinkan akses dari semua origin
-app.use(cors({
-  origin: 'https://klinikasy-syifa.vercel.app',
-  credentials: true  // Jika ada penggunaan kredensial seperti cookies
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
-// Mengkonfigurasi session
 app.use(
   session({
     secret: process.env.SESS_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // hanya secure cookie di produksi
+      secure: "auto",
     },
   })
 );
 
-// Middleware untuk mengurai request body sebagai JSON
 app.use(express.json());
 
-// Rute dasar untuk memastikan server berjalan
 app.get("/", (req, res) => {
   res.send("Selamat datang di server Klinik Asy-Syifa!");
 });
@@ -59,25 +55,23 @@ app.use(RoleRoute);
 app.use(PasienRoute);
 app.use(ObatRoute);
 app.use(AuthRoute);
+app.use(PasienRoute);
 app.use(ResepObatRoute);
 app.use(StokResep);
 
-// Port yang digunakan adalah dari file .env atau default ke 3000
-const PORT = process.env.PORT || 3000;
+// Port yang digunakan adalah dari file .env
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server up and running on port ${PORT}`);
 });
 
-// Tangani sinyal untuk shutdown bersih
 process.on("SIGINT", () => {
-  // Tutup koneksi yang perlu ditutup dengan aman
+  client.quit();
   process.exit();
 });
 
 process.on("SIGTERM", () => {
-  // Tutup koneksi yang perlu ditutup dengan aman
+  client.quit();
   process.exit();
 });
-
-module.exports = app;
