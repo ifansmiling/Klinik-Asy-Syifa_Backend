@@ -10,31 +10,32 @@ const ResepObatRoute = require("./routes/ResepObatRoute.js");
 const AuthRoute = require("./routes/AuthRoute.js");
 const StokResep = require("./routes/StokRoute.js");
 
-const db = require("./config/Database.js");
-// test
-db.authenticate()
-  .then(() => {
-    console.log("Database connected");
-    // Jalankan migrasi otomatis setiap kali server dijalankan
-    db.sync()
-      .then(() => console.log("Database synchronized"))
-      .catch((err) => console.error("Error synchronizing database:", err));
-  })
-  .catch((err) => console.error("Error connecting to database:", err));
+// const db = require("./config/Database.js");
+// // test
+// db.authenticate()
+//   .then(() => {
+//     console.log("Database connected");
+//     // Jalankan migrasi otomatis setiap kali server dijalankan
+//     db.sync()
+//       .then(() => console.log("Database synchronized"))
+//       .catch((err) => console.error("Error synchronizing database:", err));
+//   })
+//   .catch((err) => console.error("Error connecting to database:", err));
 
-// Memuat konfigurasi dari .env
-dotenv.config();
+// // Memuat konfigurasi dari .env
+// dotenv.config();
 
 const app = express();
 
 // Mengkonfigurasi CORS untuk mengizinkan akses dari semua origin
-app.use(
-  cors({
-    origin: "https://klinikasy-syifa.vercel.app/", // Atau ganti dengan URL frontend Anda untuk produksi
-    credentials: true,
-  })
-);
-
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 // Mengkonfigurasi session
 app.use(
   session({
