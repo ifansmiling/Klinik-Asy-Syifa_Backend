@@ -12,7 +12,7 @@ const StokResep = require("./routes/StokRoute.js");
 
 
 const db = require("./config/Database.js");
-
+// test
 db.authenticate()
   .then(() => {
     console.log("Database connected");
