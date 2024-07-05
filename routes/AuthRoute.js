@@ -5,7 +5,8 @@ const cors = require("cors");
 
 const router = express.Router();
 
-// Middleware checkLogin is used here to check authentication
+// Middleware checkLogin digunakan di sini untuk memeriksa autentikasi
+router.options("/login", cors()); // Handle pre-flight request for login route
 router.post("/login", cors(), loginUser);
 router.post("/logout", cors(), checkLogin, logoutUser);
 
