@@ -28,12 +28,10 @@ dotenv.config();
 const app = express();
 
 // Mengkonfigurasi CORS untuk mengizinkan akses dari semua origin
-app.use(
-  cors({
-    origin: "https://klinikasy-syifa.vercel.app",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: 'https://klinikasy-syifa.vercel.app',
+  credentials: true  // Jika ada penggunaan kredensial seperti cookies
+}));
 
 // Mengkonfigurasi session
 app.use(
